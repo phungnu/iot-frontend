@@ -9,16 +9,16 @@ import {
   } from "@mui/material";
   import React, { useState } from "react";
   import LightbulbIcon from "@mui/icons-material/Lightbulb";
+  import LightOn from "../../assets/blub-on-removebg-preview.png";
+  import LightOff from "../../assets/blub-off-removebg-preview.png";
   import { makeStyles } from "@mui/styles";
   import { useTheme } from "@mui/material/styles";
   import dayjs from "dayjs";
   
-  function LightControl({ setLightControlEvent }) {
+  function LightControl({ setLightControlEvent, statusLight, setStatusLight }) {
     const theme = useTheme();
   
     const classes = styles();
-  
-    const [checked, setChecked] = useState(true);
   
     const handleChange = (event) => {
       setLightControlEvent((prev) => [
@@ -28,24 +28,18 @@ import {
           time: dayjs().format("HH:mm:ss DD-MM-YYYY"),
         },
       ]);
-      setChecked(event.target.checked);
+      setStatusLight(event.target.checked);
     };
   
     return (
       <Card className={classes.item}>
         <CardContent>
           <Box className={classes.iconWrapper}>
-            <IconButton onClick={() => setChecked(!checked)}>
-              <LightbulbIcon
-                sx={{
-                  width: 75,
-                  height: 75,
-                  color: checked
-                    ? "yellow"
-                    : theme.palette.mode === "dark"
-                    ? "#fff"
-                    : "#000",
-                }}
+            <IconButton onClick={() => setStatusLight(!statusLight)}>
+              <img
+                  src={statusLight ? LightOn : LightOff}
+                  alt="Fan icon"
+                  style={{ width: 75, height: 75, color: "red" }}
               />
             </IconButton>
           </Box>
@@ -53,7 +47,7 @@ import {
           <Stack direction="row" alignItems="center" justifyContent="center">
             <Typography>OFF</Typography>
             <Switch
-              checked={checked}
+              checked={statusLight}
               onChange={handleChange}
               inputProps={{ "aria-label": "controlled" }}
             />

@@ -7,47 +7,21 @@ import {
   useTheme,
 } from "@mui/material";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import LightEvent from "./LightEvent";
+import FanEvent from "./FanEvent";
+import {Row, Col} from 'antd'
 
-function Events() {
-  const location = useLocation();
-
-  const theme = useTheme();
-
-  const [color, setColor] = useState("#000");
-
-  useEffect(() => {
-    const res = theme.palette.mode === "dark" ? "#fff" : "#000";
-    setColor(res);
-  }, [theme]);
-
+function Events({lightControlEvent, fanControlEvent}) {
   return (
     <Container maxWidth="xl" sx={{ paddingTop: 3 }}>
-      <Breadcrumbs aria-label="breadcrumb">
-        {[
-          { name: "Light", route: "/events/light" },
-          {
-            name: "Fan",
-            route: "/events/fan",
-          },
-        ].map((val, idx) => (
-          <Link
-            to={val.route}
-            key={idx}
-            style={{
-              color:
-                location.pathname === val.route ||
-                (location.pathname === "/events" &&
-                  val.route === "/events/light")
-                  ? "rgb(0, 127, 255)"
-                  : color,
-              textDecoration: "none",
-            }}
-          >
-            {val.name}
-          </Link>
-        ))}
-      </Breadcrumbs>
-      <Outlet />
+      <Row>
+        <Col span={12}>
+          <LightEvent lightControlEvent={lightControlEvent} />
+        </Col>
+        <Col span={12}>
+          <FanEvent fanControlEvent={fanControlEvent} />
+        </Col>
+      </Row>
     </Container>
   );
 }

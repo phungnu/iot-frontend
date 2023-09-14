@@ -14,7 +14,7 @@ export default function DataSensor({ tempList, humidList, lightList }) {
     setData(arr);
   }, []);
   return (
-    <Box style={{ marginTop: 20 }}>
+    <Box style={{ maxWidth: 1488, marginLeft: 'auto', marginRight: 'auto', margintop: 40}}>
       <CustomTable data={data} />
     </Box>
   );

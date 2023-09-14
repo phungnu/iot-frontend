@@ -1,6 +1,4 @@
-import { ThemeProvider } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import { darkTheme, lightTheme } from "./configs";
 import { Route, Routes } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import MenuAppBar from "./components/MenuAppBar";
@@ -23,7 +21,9 @@ function App() {
   const [humidList, setHumidList] = useState(storedHumidList);
   const [lightList, setLightList] = useState(storedLightList);
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [statusLight, setStatusLight] = useState(true)
+  const [statusFan, setStatusFan] = useState(true)
+
   const [lightControlEvent, setLightControlEvent] = useState([
     { mode: "ON", time: dayjs().format("HH:mm:ss DD-MM-YYYY") },
   ]);
@@ -44,10 +44,10 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+    <div>
       <CssBaseline />
 
-      <MenuAppBar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      <MenuAppBar />
 
       {/* Router  */}
       <Routes>
@@ -63,6 +63,10 @@ function App() {
               setLightList={setLightList}
               setLightControlEvent={setLightControlEvent}
               setFanControlEvent={setFanControlEvent}
+              statusFan={statusFan}
+              statusLight={statusLight}
+              setStatusFan={setStatusFan}
+              setStatusLight={setStatusLight}
             />
           }
         />
@@ -77,22 +81,10 @@ function App() {
             />
           }
         />
-        <Route path="/events" element={<Events />}>
-          <Route
-            path=""
-            element={<LightEvent lightControlEvent={lightControlEvent} />}
-          />
-          <Route
-            path="light"
-            element={<LightEvent lightControlEvent={lightControlEvent} />}
-          />
-          <Route
-            path="fan"
-            element={<FanEvent fanControlEvent={fanControlEvent} />}
-          />
+        <Route path="/events" element={<Events lightControlEvent={lightControlEvent} fanControlEvent={fanControlEvent}/>}>
         </Route>
       </Routes>
-    </ThemeProvider>
+    </div>
   );
 }
 

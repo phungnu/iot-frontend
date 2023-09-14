@@ -15,10 +15,16 @@ function Dashboard({
   setLightList,
   setLightControlEvent,
   setFanControlEvent,
+  statusLight,
+  statusFan,
+  setStatusLight,
+  setStatusFan
 }) {
   const storedTempList = JSON.parse(localStorage.getItem("tempList")) || [30];
   const storedHumidList = JSON.parse(localStorage.getItem("humidList")) || [50];
   const storedLightList = JSON.parse(localStorage.getItem("lightList")) || [68];
+
+  console.log('light: ' + statusLight)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,11 +74,11 @@ function Dashboard({
           <Grid item xs={12} sm={12} md={4} order={{ xs: 1, md: 2 }}>
             <Grid container spacing={3}>
               <Grid item xs={6} sm={6} md={12}>
-                <LightControl setLightControlEvent={setLightControlEvent} />
+                <LightControl statusLight={statusLight} setLightControlEvent={setLightControlEvent} setStatusLight={setStatusLight} />
               </Grid>
 
               <Grid item xs={6} sm={6} md={12}>
-                <FanControl setFanControlEvent={setFanControlEvent} />
+                <FanControl statusFan={statusFan} setFanControlEvent={setFanControlEvent} setStatusFan={setStatusFan} />
               </Grid>
             </Grid>
           </Grid>

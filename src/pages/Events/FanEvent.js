@@ -4,7 +4,8 @@ import StickyHeadTable from "../../components/StickyHeadTable";
 
 function FanEvent({ fanControlEvent }) {
   return (
-    <Box style={{ marginTop: 20 }}>
+    <Box style={{ marginTop: 20, paddingLeft:20 }}>
+      <h4>Fan</h4>
       <StickyHeadTable data={fanControlEvent} />
     </Box>
   );

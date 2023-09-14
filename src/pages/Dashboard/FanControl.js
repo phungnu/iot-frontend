@@ -13,12 +13,10 @@ import {
   import { useTheme } from "@mui/material/styles";
   import dayjs from "dayjs";
   
-  function FanControl({ setFanControlEvent }) {
+  function FanControl({ setFanControlEvent, statusFan, setStatusFan }) {
     const theme = useTheme();
   
     const classes = styles();
-  
-    const [checked, setChecked] = useState(true);
   
     const handleChange = (event) => {
       setFanControlEvent((prev) => [
@@ -28,7 +26,7 @@ import {
           time: dayjs().format("HH:mm:ss DD-MM-YYYY"),
         },
       ]);
-      setChecked(event.target.checked);
+      setStatusFan(event.target.checked);
     };
   
     return (
@@ -36,8 +34,8 @@ import {
         <CardContent>
           <Box className={classes.iconWrapper}>
             <IconButton
-              className={checked ? classes.rotatingIcon : ""}
-              onClick={() => setChecked(!checked)}
+              className={statusFan ? classes.rotatingIcon : ""}
+              onClick={() => setStatusFan(!statusFan)}
             >
             <img
                 src={Fan}
@@ -50,7 +48,7 @@ import {
           <Stack direction="row" alignItems="center" justifyContent="center">
             <Typography>OFF</Typography>
             <Switch
-              checked={checked}
+              checked={statusFan}
               onChange={handleChange}
               inputProps={{ "aria-label": "controlled" }}
             />
