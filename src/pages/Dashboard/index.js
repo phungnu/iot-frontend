@@ -4,88 +4,127 @@ import Header from "./Header";
 import CustomChart from "./CustomChart";
 import LightControl from "./LightControl";
 import FanControl from "./FanControl";
-import { getRandomValue, saveToLocalStorage } from "../../utils";
+import axios from "axios";
 
-function Dashboard({
-  tempList,
-  humidList,
-  lightList,
-  setTempList,
-  setHumidList,
-  setLightList,
-  setLightControlEvent,
-  setFanControlEvent,
-  statusLight,
-  statusFan,
-  setStatusLight,
-  setStatusFan
-}) {
-  const storedTempList = JSON.parse(localStorage.getItem("tempList")) || [30];
-  const storedHumidList = JSON.parse(localStorage.getItem("humidList")) || [50];
-  const storedLightList = JSON.parse(localStorage.getItem("lightList")) || [68];
+import { config } from "../../config";
 
-  console.log('light: ' + statusLight)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const temp1 = getRandomValue(1, 100);
-      setTempList((prev) => [...prev, temp1]);
 
-      const humid1 = getRandomValue(1, 100);
-      setHumidList((prev) => [...prev, humid1]);
+const init = [{
+    temperature: 0,
+    humidity: 0,
+    light: 0
+}]
 
-      const light1 = getRandomValue(1, 100);
-      setLightList((prev) => [...prev, light1]);
 
-      saveToLocalStorage("tempList", [...storedTempList, temp1]);
-      saveToLocalStorage("humidList", [...storedHumidList, humid1]);
-      saveToLocalStorage("lightList", [...storedLightList, light1]);
-    }, 5000);
+function Dashboard() {
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
 
-  return (
-    <Box
-      sx={{
-        flexGrow: 1,
-      }}
-    >
-      <Container maxWidth="xl" sx={{ paddingTop: 3 }}>
-        <Header
-          temp={tempList[tempList.length - 1]}
-          humid={humidList[humidList.length - 1]}
-          light={lightList[lightList.length - 1]}
+
+    const [sensorData, setSensorData] = useState(init)
+
+    useEffect(() => {
+
+        const getSensorData = async() => {
+            await axios.get(`${config.host_api}/mqtt/getAll`)
+                .then(res => {
+                    let data = res.data;
+                    console.log(data)
+                    if (data.length > 0)
+                        setSensorData(data);
+                })
+                .catch(err => console.log(err))
+        }
+
+        // const fetchLedStatus = async() => {
+        //     try {
+        //         const response = await fetch(`${config.host_api}/getall`);
+        //         if (response.ok) {
+        //             const data = await response.json();
+        //             setSensorData(data);
+        //         } else {
+        //             console.error('Error fetching data:', response.status);
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error);
+        //     }
+        // };
+
+        const intervalId = setInterval(() => {
+            getSensorData();
+        }, 3000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+
+    }, []);
+
+    return ( <
+        Box sx = {
+            {
+                flexGrow: 1,
+            }
+        } >
+        <
+        Container maxWidth = "xl"
+        sx = {
+            { paddingTop: 3 }
+        } >
+        <
+        Header temp = { sensorData[sensorData.length - 1].temperature }
+        humid = { sensorData[sensorData.length - 1].humidity }
+        light = { sensorData[sensorData.length - 1].light }
         />
 
-        <Grid container spacing={3} sx={{ paddingTop: 3 }}>
-          {/* Chart  */}
-          <Grid item xs={12} sm={12} md={8} order={{ xs: 2, md: 1 }}>
-            <CustomChart
-              tempList={tempList}
-              humidList={humidList}
-              lightList={lightList}
-            />
-          </Grid>
+        <
+        Grid container spacing = { 3 }
+        sx = {
+            { paddingTop: 3 }
+        } > { /* Chart  */ } <
+        Grid item xs = { 12 }
+        sm = { 12 }
+        md = { 8 }
+        order = {
+            { xs: 2, md: 1 }
+        } >
+        <
+        CustomChart sensorData = { sensorData }
+        /> < /
+        Grid >
 
-          {/* Control  */}
-          <Grid item xs={12} sm={12} md={4} order={{ xs: 1, md: 2 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={6} sm={6} md={12}>
-                <LightControl statusLight={statusLight} setLightControlEvent={setLightControlEvent} setStatusLight={setStatusLight} />
-              </Grid>
+        { /* Control  */ } <
+        Grid item xs = { 12 }
+        sm = { 12 }
+        md = { 4 }
+        order = {
+            { xs: 1, md: 2 }
+        } >
+        <
+        Grid container spacing = { 3 } >
+        <
+        Grid item xs = { 6 }
+        sm = { 6 }
+        md = { 12 } >
+        <
+        LightControl / >
+        <
+        /Grid>
 
-              <Grid item xs={6} sm={6} md={12}>
-                <FanControl statusFan={statusFan} setFanControlEvent={setFanControlEvent} setStatusFan={setStatusFan} />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
-  );
+        <
+        Grid item xs = { 6 }
+        sm = { 6 }
+        md = { 12 } >
+        <
+        FanControl / >
+        <
+        /Grid> < /
+        Grid > <
+        /Grid> < /
+        Grid > <
+        /Container> < /
+        Box >
+    );
 }
 
 export default Dashboard;
