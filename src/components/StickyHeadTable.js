@@ -12,10 +12,10 @@ import {
 
 const columns = [
   { id: "id", label: "ID", minWidth: 100 },
-  { id: "mode", label: "Mode", minWidth: 100 },
+  { id: "status", label: "Status", minWidth: 100 },
   {
-    id: "time",
-    label: "Time",
+    id: "timestamp",
+    label: "Timestamp",
     minWidth: 170,
   },
 ];

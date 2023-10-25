@@ -7,27 +7,53 @@ import {
     Switch,
     Typography,
   } from "@mui/material";
-  import React, { useState } from "react";
+  import React, { useState, useEffect } from "react";
   import { makeStyles } from "@mui/styles";
   import Fan from "../../assets/fan-manh-removebg-preview.png";
-  import { useTheme } from "@mui/material/styles";
-  import dayjs from "dayjs";
+  import axios from 'axios';
+  import { config } from '../../config';
   
-  function FanControl({ setFanControlEvent, statusFan, setStatusFan }) {
-    const theme = useTheme();
+  function FanControl() {
+
+    const [ statusFan, setStatusFan] = useState(false);
+     useEffect(() => {
+          const getSensorData = async() => {
+          await axios.get(`${config.host_api}/fanstatus/getAll`)
+               .then(res => {
+                    let data = res.data;
+                    if (data.length > 0) {
+                      console.log(data)
+                      if ( data[data.length-1].status == 'FAN ON')
+                      setStatusFan(true);
+                    }
+                      
+               })
+               .catch(err => console.log(err))
+          }
+          getSensorData()
+     }, []);
+
+     const senMQTT = async(message) => {
+          await axios.post(`${config.host_api}/mqtt/send-data`, {
+               topic: 'FAN',
+               message: message
+          })
+               .then(res => {
+                    console.log('OK')
+               })
+               .catch(err => console.log(err))
+     }
+
+    const handleChange = async (event) => {
+      
+     setStatusFan(!statusFan);
+
+          const message = statusFan ? 'FAN OFF' : 'FAN ON';
+
+          await senMQTT(message)
+     };
   
     const classes = styles();
-  
-    const handleChange = (event) => {
-      setFanControlEvent((prev) => [
-        ...prev,
-        {
-          mode: event.target.checked ? "ON" : "OFF",
-          time: dayjs().format("HH:mm:ss DD-MM-YYYY"),
-        },
-      ]);
-      setStatusFan(event.target.checked);
-    };
   
     return (
       <Card className={classes.item}>

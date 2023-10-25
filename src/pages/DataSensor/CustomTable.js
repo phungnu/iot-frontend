@@ -1,55 +1,60 @@
 import React, { useState, useEffect } from "react";
 import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
 } from "@mui/material";
 
 const columns = [
-  { id: "id", label: "ID", minWidth: 100 },
-  { id: "temp", label: "Temp", minWidth: 100 },
-  {
-    id: "humid",
-    label: "Humid",
-    minWidth: 170,
-  },
-  {
-    id: "light",
-    label: "Light",
-    minWidth: 170,
-  },
+    { id: "id", label: "ID", minWidth: 100 },
+    { id: "temperature", label: "Temp", minWidth: 100 },
+    {
+        id: "humidity",
+        label: "Humid",
+        minWidth: 170,
+    },
+    {
+        id: "light",
+        label: "Light",
+        minWidth: 170,
+    },
+    {
+        id: "timestamp",
+        label: "Timestamp",
+        minWidth: 170,
+    },
 ];
 
 const createRowsData = (data) => {
-  const rows = data.map((val, idx) => {
-    return { id: idx, ...val };
-  });
-  return rows;
+    const rows = data.map((val, idx) => {
+        return { id: idx, ...val };
+    });
+    return rows;
 };
 
 export default function CustomTable({ data }) {
-  const [rows, setRows] = useState([{ mode: "", time: "" }]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rows, setRows] = useState([]);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  useEffect(() => {
-    const res = createRowsData(data);
-    setRows(res);
-  }, [data]);
+    useEffect(() => {
+        const res = createRowsData(data);
+        setRows(res);
+    }, [data]);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>

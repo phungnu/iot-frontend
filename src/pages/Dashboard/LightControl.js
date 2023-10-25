@@ -7,29 +7,53 @@ import {
     Typography,
     CardContent,
   } from "@mui/material";
-  import React, { useState } from "react";
-  import LightbulbIcon from "@mui/icons-material/Lightbulb";
+  import React, { useState, useEffect } from "react";
   import LightOn from "../../assets/blub-on-removebg-preview.png";
   import LightOff from "../../assets/blub-off-removebg-preview.png";
   import { makeStyles } from "@mui/styles";
-  import { useTheme } from "@mui/material/styles";
-  import dayjs from "dayjs";
+  import axios from 'axios';
+  import { config } from "../../config";
   
-  function LightControl({ setLightControlEvent, statusLight, setStatusLight }) {
-    const theme = useTheme();
-  
-    const classes = styles();
-  
-    const handleChange = (event) => {
-      setLightControlEvent((prev) => [
-        ...prev,
-        {
-          mode: event.target.checked ? "ON" : "OFF",
-          time: dayjs().format("HH:mm:ss DD-MM-YYYY"),
-        },
-      ]);
-      setStatusLight(event.target.checked);
-    };
+  function LightControl() {
+     const classes = styles();
+
+     const [ statusLight, setStatusLight] = useState(false);
+     useEffect(() => {
+          const getSensorData = async() => {
+          await axios.get(`${config.host_api}/ledstatus/getAll`)
+               .then(res => {
+                    let data = res.data;
+                    if (data.length > 0) {
+                      console.log(data)
+                      if ( data[data.length-1].status == 'LED ON')
+                      setStatusLight(true);
+                    }
+                      
+               })
+               .catch(err => console.log(err))
+          }
+          getSensorData()
+     }, []);
+
+     const senMQTT = async(message) => {
+          await axios.post(`${config.host_api}/mqtt/send-data`, {
+               topic: 'LED',
+               message: message
+          })
+               .then(res => {
+                    console.log('OK')
+               })
+               .catch(err => console.log(err))
+     }
+
+    const handleChange = async (event) => {
+      
+     setStatusLight(!statusLight);
+
+          const message = statusLight ? 'LED OFF' : 'LED ON';
+
+          await senMQTT(message)
+     };
   
     return (
       <Card className={classes.item}>
@@ -38,7 +62,7 @@ import {
             <IconButton onClick={() => setStatusLight(!statusLight)}>
               <img
                   src={statusLight ? LightOn : LightOff}
-                  alt="Fan icon"
+                  alt="Light icon"
                   style={{ width: 75, height: 75, color: "red" }}
               />
             </IconButton>
