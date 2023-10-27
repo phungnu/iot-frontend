@@ -34,6 +34,8 @@ function Dashboard() {
                 .catch(err => console.log(err))
         }
 
+        getSensorData();
+
         const intervalId = setInterval(() => {
             getSensorData();
         }, 1000);
@@ -41,8 +43,6 @@ function Dashboard() {
         return () => {
             clearInterval(intervalId);
         };
-
-        getSensorData();
 
     }, []);
 

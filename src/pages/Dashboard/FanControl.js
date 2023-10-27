@@ -94,7 +94,7 @@ import {
       justifyContent: "center",
     },
     rotatingIcon: {
-      animation: "spin 2s linear infinite",
+      animation: "spin 1s linear infinite",
     },
   }));
   
